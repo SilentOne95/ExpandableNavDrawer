@@ -1,6 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- Basic colors -->
     <color name="colorPrimary">#4286f4</color>
     <color name="colorPrimaryDark">#000</color>
     <color name="colorAccent">#fff</color>
+
+    <!-- Gradient background -->
+    <color name="nav_header_back_start">#373b44</color>
+    <color name="nav_header_back_end">#4286f4</color>
 </resources>

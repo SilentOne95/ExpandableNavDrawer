@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- General values -->
+    <dimen name="value_zero">0dp</dimen>
+    <dimen name="value_small">8dp</dimen>
+    <dimen name="value_mid">16dp</dimen>
+    <dimen name="value_big">24dp</dimen>
+
+    <!-- Text size - according to material design typography -->
+    <dimen name="subtitle_one">16sp</dimen>
+    <dimen name="subtitle_two">14sp</dimen>
+
+    <!-- nav_header -->
+    <dimen name="nav_header_height">200dp</dimen>
+    <dimen name="nav_header_image_size">60dp</dimen>
+
+</resources>
