@@ -1,12 +1,13 @@
 package com.example.konta.expandablenavdrawer;
 
+import android.support.annotation.NonNull;
+import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBar;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ExpandableListView;
@@ -15,13 +16,12 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
-    private DrawerLayout drawerLayout;
-    MyExpandableListAdapter myExpandableListAdapter;
+    ExpandableListAdapter expandableListAdapter;
     ExpandableListView expandableListView;
-    List<ExpandedMenuModel> listGroupData;
-    HashMap<ExpandedMenuModel, List<String>> listChildData;
+    List<MenuModel> menuList = new ArrayList<>();
+    HashMap<MenuModel, List<MenuModel>> submenuList = new HashMap<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,73 +31,108 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        ActionBar actionBar = getSupportActionBar();
-        actionBar.setDisplayHomeAsUpEnabled(true);
-        actionBar.setHomeAsUpIndicator(R.drawable.ic_menu);
-
-        drawerLayout = findViewById(R.id.drawer_layout);
         expandableListView = findViewById(R.id.expandable_list_view);
+        prepareMenuData();
+        populateExpandableList();
 
-        prepareListData();
+        DrawerLayout drawerLayout = findViewById(R.id.drawer_layout);
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar,
+                R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        drawerLayout.addDrawerListener(toggle);
+        toggle.syncState();
 
-        expandableListView.setAdapter(myExpandableListAdapter);
-        expandableListView.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
-            @Override
-            public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long id) {
-                return false;
-            }
-        });
+        NavigationView navigationView = findViewById(R.id.nav_view);
+        navigationView.setNavigationItemSelectedListener(this);
+    }
+
+    @Override
+    public void onBackPressed() {
+        DrawerLayout drawerLayout = findViewById(R.id.drawer_layout);
+        if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
+            drawerLayout.closeDrawer(GravityCompat.START);
+        } else {
+            super.onBackPressed();
+        }
+    }
+
+    private void prepareMenuData() {
+
+        // First menuItem with no submenuItem
+        MenuModel menuModel = new MenuModel("Menu 1", true, false);
+        menuList.add(menuModel);
+
+        if (!menuModel.hasChildren) {
+            submenuList.put(menuModel, null);
+        }
+
+        menuModel = new MenuModel("Menu 2", true, true);
+        menuList.add(menuModel);
+        List<MenuModel> childModelsList = new ArrayList<>();
+        MenuModel childModel = new MenuModel("Submenu 2-1", false, false);
+        childModelsList.add(childModel);
+
+        childModel = new MenuModel("Submenu 2-2", false, false);
+        childModelsList.add(childModel);
+
+        childModel = new MenuModel("Submenu 2-3", false, false);
+        childModelsList.add(childModel);
+
+
+        if (menuModel.hasChildren) {
+            submenuList.put(menuModel, childModelsList);
+        }
+
+        childModelsList = new ArrayList<>();
+        menuModel = new MenuModel("Menu 3", true, true);
+        menuList.add(menuModel);
+        childModel = new MenuModel("Submenu 3-1", false, false);
+        childModelsList.add(childModel);
+
+
+        childModel = new MenuModel("Submenu 3-2", false, false);
+        childModelsList.add(childModel);
+
+        if (menuModel.hasChildren) {
+            submenuList.put(menuModel, childModelsList);
+        }
+    }
+
+    private void populateExpandableList() {
+        expandableListAdapter = new ExpandableListAdapter(this, menuList, submenuList);
+        expandableListView.setAdapter(expandableListAdapter);
+
         expandableListView.setOnGroupClickListener(new ExpandableListView.OnGroupClickListener() {
             @Override
             public boolean onGroupClick(ExpandableListView parent, View v, int groupPosition, long id) {
+
+                if (menuList.get(groupPosition).isGroup) {
+                    if (!menuList.get(groupPosition).hasChildren) {
+                        onBackPressed();
+                    }
+                }
+
+                return false;
+            }
+        });
+
+        expandableListView.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
+            @Override
+            public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long id) {
+
+                if (submenuList.get(menuList.get(groupPosition)) != null) {
+                    onBackPressed();
+                }
+
                 return false;
             }
         });
     }
 
-    private void prepareListData() {
-        listGroupData = new ArrayList<>();
-        listChildData = new HashMap<>();
-
-        ExpandedMenuModel itemOne = new ExpandedMenuModel();
-        itemOne.setIconName("IconOne");
-        itemOne.setIconResourceId(R.drawable.ic_menu_home);
-        listGroupData.add(itemOne);
-
-        ExpandedMenuModel itemTwo = new ExpandedMenuModel();
-        itemTwo.setIconName("IconTwo");
-        itemTwo.setIconResourceId(R.drawable.ic_menu_cube);
-        listGroupData.add(itemTwo);
-
-        ExpandedMenuModel itemThree = new ExpandedMenuModel();
-        itemThree.setIconName("IconThree");
-        itemThree.setIconResourceId(R.drawable.ic_menu_info);
-        listGroupData.add(itemThree);
-
-        List<String> childOne = new ArrayList<>();
-        childOne.add("Submenu of item one");
-
-        List<String> childTwo = new ArrayList<>();
-        childTwo.add("Submenu of item two");
-        childTwo.add("Submenu of item two");
-        childTwo.add("Submenu of item two");
-
-        listChildData.put(listGroupData.get(0), childOne);
-        listChildData.put(listGroupData.get(1), childTwo);
-    }
-
+    @SuppressWarnings("StatementWithEmptyBody")
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
+    public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
+        DrawerLayout drawerLayout = findViewById(R.id.drawer_layout);
+        drawerLayout.closeDrawer(GravityCompat.START);
         return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem menuItem) {
-        switch (menuItem.getItemId()) {
-            case android.R.id.home:
-                drawerLayout.openDrawer(GravityCompat.START);
-                return true;
-        }
-        return super.onOptionsItemSelected(menuItem);
     }
 }

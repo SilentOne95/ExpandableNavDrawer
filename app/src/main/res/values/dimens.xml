@@ -13,5 +13,7 @@
     <!-- nav_header -->
     <dimen name="nav_header_height">200dp</dimen>
     <dimen name="nav_header_image_size">60dp</dimen>
+    <dimen name="list_item_spacing">16dp</dimen>
+    <dimen name="list_item_spacing_half">8dp</dimen>
 
 </resources>
