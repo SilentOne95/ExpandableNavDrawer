@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.HashMap;
@@ -39,7 +40,7 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
     public View getChildView(int groupPosition, final int childPosition,
                              boolean isLastChild, View convertView, ViewGroup parent) {
 
-        final String childText = getChild(groupPosition, childPosition).menuName;
+        final String submenuListTitle = getChild(groupPosition, childPosition).menuName;
 
         if (convertView == null) {
             LayoutInflater inflater = (LayoutInflater) this.context
@@ -47,10 +48,10 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
             convertView = inflater.inflate(R.layout.submenu_list_item, null);
         }
 
-        TextView txtListChild = convertView
+        TextView submenuListTextView = convertView
                 .findViewById(R.id.submenu_item_text_view);
+        submenuListTextView.setText(submenuListTitle);
 
-        txtListChild.setText(childText);
         return convertView;
     }
 
@@ -83,16 +84,19 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
     @Override
     public View getGroupView(int groupPosition, boolean isExpanded,
                              View convertView, ViewGroup parent) {
-        String headerTitle = getGroup(groupPosition).menuName;
+        String menuListTitle = getGroup(groupPosition).menuName;
+        int menuListIcon = getGroup(groupPosition).imageResourceId;
+
         if (convertView == null) {
             LayoutInflater inflater = (LayoutInflater) this.context
                     .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             convertView = inflater.inflate(R.layout.menu_list_item, null);
         }
 
-        TextView lblListHeader = convertView.findViewById(R.id.menu_item_text_view);
-        lblListHeader.setTypeface(null, Typeface.BOLD);
-        lblListHeader.setText(headerTitle);
+        TextView menuListTextView = convertView.findViewById(R.id.menu_item_text_view);
+        menuListTextView.setTypeface(null, Typeface.BOLD);
+        menuListTextView.setText(menuListTitle);
+        menuListTextView.setCompoundDrawablesWithIntrinsicBounds(menuListIcon, 0, 0,0);
 
         return convertView;
     }

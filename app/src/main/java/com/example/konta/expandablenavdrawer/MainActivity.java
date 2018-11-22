@@ -58,14 +58,15 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private void prepareMenuData() {
 
         // First menuItem with no submenuItem
-        MenuModel menuModel = new MenuModel("Menu 1", true, false);
+        MenuModel menuModel = new MenuModel("Menu 1", true, false, R.drawable.ic_menu_home);
         menuList.add(menuModel);
 
         if (!menuModel.hasChildren) {
             submenuList.put(menuModel, null);
         }
 
-        menuModel = new MenuModel("Menu 2", true, true);
+        // Second menuItem with 3 submenuItem
+        menuModel = new MenuModel("Menu 2", true, true, R.drawable.ic_menu_cube);
         menuList.add(menuModel);
         List<MenuModel> childModelsList = new ArrayList<>();
         MenuModel childModel = new MenuModel("Submenu 2-1", false, false);
@@ -82,8 +83,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             submenuList.put(menuModel, childModelsList);
         }
 
+        // Third menuItem with 2 submenuItem
         childModelsList = new ArrayList<>();
-        menuModel = new MenuModel("Menu 3", true, true);
+        menuModel = new MenuModel("Menu 3", true, true, R.drawable.ic_menu_info);
         menuList.add(menuModel);
         childModel = new MenuModel("Submenu 3-1", false, false);
         childModelsList.add(childModel);
